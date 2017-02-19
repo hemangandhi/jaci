@@ -59,6 +59,7 @@ void runJaciCmd(string &line, vector<string> &committed) {
         "\t$().exit()    \tQuit the program\n"
         "\t$().save(f)   \tSave the current program to the filename f\n"
         "\t$().pop()     \tRemove the last command off the program list\n"
+        "\t$().printc()  \tPrint the current program\n"
         "\t$().addflag(f)\tAdd flag f to the compilation line\n"
         "\t$().addlib(l) \tAdd library l to the compilation line\n"
         "\n");
@@ -71,6 +72,14 @@ void runJaciCmd(string &line, vector<string> &committed) {
       content += line;
     }
     saveToFile(filename, content);
+  } else if (line == "pop()\n") {
+    if (!committed.empty()) {
+      committed.pop_back();
+    }
+  } else if (line == "printc()\n") {
+    for (string &line : committed) {
+      cout << line;
+    }
   } else if (line.substr(0, 7) == "addlib(") {
     string libname = line.substr(7, line.size() - 9);
     libs.push_back(libname);
