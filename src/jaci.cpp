@@ -53,13 +53,21 @@ void runJaciCmd(string &line, vector<string> &committed) {
   // TODO: implement features
   if (line == "help()\n") {
     printf("\nFunctions to use:\n"
-        "\t$().help()\tView the help prompt\n"
-        "\t$().exit()\tQuit the program\n"
-        "\t$().save(f)\tSave the current program to the filename f\n"
-        "\t$().pop()\tRemove the last command off the program list\n"
+        "\t$().help()    \tView the help prompt\n"
+        "\t$().exit()    \tQuit the program\n"
+        "\t$().save(f)   \tSave the current program to the filename f\n"
+        "\t$().pop()     \tRemove the last command off the program list\n"
+        "\t$().addflag(f)\tAdd flag f to the compilation line\n"
+        "\t$().addlib(l) \tAdd library l to the compilation line\n"
         "\n");
   } else if (line == "exit()\n") {
     quitsig = 0;
+  } else if (line.substr(0, 7) == "addlib(") {
+    string libname = line.substr(7, line.size() - 9);
+    libs.push_back(libname);
+  } else if (line.substr(0, 8) == "addflag(") {
+    string flagname = line.substr(8, line.size() - 10);
+    flags.push_back(flagname);
   }
 }
 
