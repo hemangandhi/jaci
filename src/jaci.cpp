@@ -62,6 +62,7 @@ void runJaciCmd(string &line, vector<string> &committed) {
         "\t$().printc()  \tPrint the current program\n"
         "\t$().addflag(f)\tAdd flag f to the compilation line\n"
         "\t$().addlib(l) \tAdd library l to the compilation line\n"
+		"\t$().clear()   \tClear program\n"
         "\n");
   } else if (line == "exit()\n") {
     quitsig = 0;
@@ -86,6 +87,9 @@ void runJaciCmd(string &line, vector<string> &committed) {
   } else if (line.substr(0, 8) == "addflag(") {
     string flagname = line.substr(8, line.size() - 10);
     flags.push_back(flagname);
+  }
+  else if(line == "clear()\n"){
+    committed.clear();
   }
 }
 
@@ -235,10 +239,15 @@ void insertToStaged(vector<string> &staged, string &line) {
 int main(int argc, char *argv[]) {
   signal(SIGINT, quitprog);
   printAbout();
-  int numBrace = 0;
-  bool inMain = false;
+  int numBrace = 1;
+  bool inMain = true;
   vector<string> committed;
   vector<string> staged;
+  // place a hacky main()
+  committed.push_back("#include <stdio.h>\n");
+  committed.push_back("#include <stdlib.h>\n");
+  committed.push_back("int main(){\n");
+  
 
   // start up a process?
   quitsig++;
