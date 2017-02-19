@@ -24,14 +24,31 @@ void printAbout(void) {
       );
 }
 
+/** This function tries to determine whether or not the inputted line
+ *  is a "special" Jaci cmd [indicated by $()], or just a regular C line
+ *  @param line a line from the console
+ *  @return true if this is a "special" command (has $ in the front),
+ *  false otherwise
+ */
 bool isJaci(string &line) {
   return line.size() >= 4 && line.substr(0, 4) == "$().";
 }
 
+/** Return the latter part of the command, (eg. "$().exit()\n" => "exit()\n")
+ *  @param line a line from the console
+ *  @return the latter part of the command
+ */
 string getJaciCmd(string &line) {
   return line.substr(4);
 }
 
+/** "Runs" the Jasi command, given that it is the latter part
+ *  eg. Good input: "exit()\n"
+ *      Bad input: "$().exit()\n"
+ *      Bad input: "exit()"
+ *  @param line the latter part of the Jasi command
+ *  @param committed the list of currently committed C commands
+ */
 void runJaciCmd(string &line, vector<string> &committed) {
   // TODO: implement features
   if (line == "help()\n") {
@@ -46,6 +63,14 @@ void runJaciCmd(string &line, vector<string> &committed) {
   }
 }
 
+/** Gets the number of braces in the current line
+ *  eg. { => 1
+ *      {} => 0
+ *      {{} => 1
+ *      {}} => -1
+ *  @param line a line from the console
+ *  @return number of braces
+ */
 int getNumBrace(string &line) {
   int numBrace = 0;
   for (char &c : line) {
@@ -58,6 +83,12 @@ int getNumBrace(string &line) {
   return numBrace;
 }
 
+/** Switches the boolean inMain from either true or false, to indicate
+ *  whether or not we are in the main function
+ *  @param inMain the boolean that can be changed
+ *  @param line a line from the console
+ *  @param numBrace the current number of braces
+ */
 void toggleInMain(bool &inMain, string &line, int numBrace) {
   if (numBrace <= 0) {
     inMain = false;
@@ -67,12 +98,21 @@ void toggleInMain(bool &inMain, string &line, int numBrace) {
   }
 }
 
+/** Run a command line on Bash
+ *  @param the line to run on bash
+ *  @return the exit code
+ */
 int runConsoleCmd(string &cmd) {
   int status;
   status = system(cmd.c_str());
   return status;
 }
 
+/** Create a compile line, execute the compile line, and then finally,
+ *  if run is true, then execute the resulting executable
+ *  @param run if true, will execute the executable, otherwise it will not
+ *  @return true if compiled (and ran) successfully, false if an error has occurred
+ */
 bool compileAndRun(bool run) {
   string compileCmd = "gcc";
   for (string &flag : flags) {
@@ -111,11 +151,22 @@ bool compileAndRun(bool run) {
   return true;
 }
 
+/** Returns whether or not a file exists
+ *  @param fname the name of the file
+ *  @return true if the file exists, false otherwise
+ */
 bool fileExists(string &fname) {
   struct stat buffer;
   return (stat(fname.c_str(), &buffer) == 0);
 }
 
+/** First creates a C program, then calls compileAndRun()
+ *  @param committed list of commited lines
+ *  @param staged list of lines that need to be tried; if successful, adds to committed
+ *  @param inMain whether or not we are in the main method
+ *  @param numBrace the number of braces
+ *  @return true if successful in compiling (and running), otherwise false
+ */
 bool evaluate(vector<string> &committed, vector<string> &staged, bool inMain, int numBrace) {
   // write a program file with the list of c lines
   if (fileExists(cFilename)) {
@@ -147,6 +198,10 @@ bool evaluate(vector<string> &committed, vector<string> &staged, bool inMain, in
   return status;
 }
 
+/** Insert a line into the staged list
+ *  @param staged the staged list
+ *  @param line a line from the console
+ */
 void insertToStaged(vector<string> &staged, string &line) {
   staged.push_back(line);
 }
