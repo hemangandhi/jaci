@@ -6,7 +6,7 @@ Jaci is a C interpreter is a program that is suppose to mimic the functionality 
 but for C-Language. 
 
 ## Interpreter Functionality
-- [ ] `$(var_name)` prints `var_value`
-- [ ] Command histroy scrolling with <kbd>up</kbd> and <kbd>down</kbd>
-- [ ] `$().exit()` exits the interpreter
-- [ ] Other ideas will be added soon
+- [x] `$(var_name)` prints `var_value`
+- [x] Command histroy scrolling with <kbd>up</kbd> and <kbd>down</kbd>
+- [x] `$().exit()` exits the interpreter
+
