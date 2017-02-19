@@ -10,6 +10,8 @@ static vector<string> libs;
 static string cFilename = "__jaci_committed_staged_merged__.c";
 static string cRunnable = "__jaci_executable__";
 
+static void saveToFile(string &filename, string &content);
+
 static int quitsig;
 void quitprog(int signo) {
   quitsig--;
@@ -62,6 +64,13 @@ void runJaciCmd(string &line, vector<string> &committed) {
         "\n");
   } else if (line == "exit()\n") {
     quitsig = 0;
+  } else if (line.substr(0, 5) == "save(") {
+    string filename = line.substr(5, line.size() - 7);
+    string content = "";
+    for (string &line : committed) {
+      content += line;
+    }
+    saveToFile(filename, content);
   } else if (line.substr(0, 7) == "addlib(") {
     string libname = line.substr(7, line.size() - 9);
     libs.push_back(libname);
@@ -250,4 +259,18 @@ int main(int argc, char *argv[]) {
     }
   }
   return 0;
+}
+
+/** Open a file with nothing in it, and place the content inside
+ *  @param filename name of the file
+ *  @param content the content to place inside te file
+ */
+static void saveToFile(string &filename, string &content) {
+  if (fileExists(filename)) {
+    unlink(filename.c_str());
+  }
+  ofstream fp;
+  fp.open(filename);
+  fp << content;
+  fp.close();
 }
